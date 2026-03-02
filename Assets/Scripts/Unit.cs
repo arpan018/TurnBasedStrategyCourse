@@ -10,10 +10,17 @@ public class Unit : MonoBehaviour
     private float moveSpeed = 4f;
     private float rotateSpeed = 10f;
     private float stoppingDistance = 0.1f;
+    private GridPosition gridPosition;
 
     private void Awake()
     {
         targetPosition = transform.position;
+    }
+
+    private void Start()
+    {
+        gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+        LevelGrid.Instance.AddUnitAtGridPosition(gridPosition, this);
     }
 
     public void Move(Vector3 targetPosition)
@@ -35,5 +42,18 @@ public class Unit : MonoBehaviour
         {
             unityAnimator.SetBool("IsWalking", false);
         }
+        
+        var newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+        if(newGridPosition != gridPosition) 
+        {
+            // update unit grid postion and noify grid object
+            LevelGrid.Instance.UnitMovedGridPosition(this,gridPosition, newGridPosition);
+            gridPosition = newGridPosition;
+        }
+    }
+
+    public override string ToString()
+    {
+        return gameObject.name;
     }
 }
